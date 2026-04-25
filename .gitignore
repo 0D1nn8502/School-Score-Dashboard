@@ -1,0 +1,6 @@
+./dashenv/
+.dashenv/ 
+
+# Ignore all .env files
+*.env 
+
