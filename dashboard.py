@@ -25,9 +25,9 @@ st.markdown("""
     [data-testid="metric-container"] [data-testid="stMetricDelta"] { color: #3ecf8e !important; }
     h1, h2, h3 { color: #e8eaf0 !important; }
     .stTabs [data-baseweb="tab-list"] {
-        background: #1a1e28; border-radius: 8px; padding: 4px; gap: 2px; border: 1px solid #252a38;
+        background: #1a1e28; border-radius: 8px; padding: 6px; gap: 8px; border: 1px solid #252a38;
     }
-    .stTabs [data-baseweb="tab"] { background: transparent; color: #9ca3af; border-radius: 6px; font-size: 0.85rem; }
+    .stTabs [data-baseweb="tab"] { background: transparent; color: #9ca3af; border-radius: 6px; font-size: 0.85rem; padding: 8px 22px !important; }
     .stTabs [aria-selected="true"] { background: #4f8ef7 !important; color: white !important; }
     .stTextInput input {
         background: #1a1e28 !important; border: 1px solid #252a38 !important;
@@ -225,11 +225,21 @@ with tab1:
             values=result_counts.values.tolist(),
             hole=0.65,
             marker=dict(colors=["#3ecf8e", "#e75858"], line=dict(width=0)),
-            textinfo="percent+label",
-            textfont=dict(color="#e8eaf0"),
-            hovertemplate="%{label}: %{value} students<extra></extra>",
+            textinfo="percent",
+            textposition="inside",
+            textfont=dict(color="#ffffff", size=13),
+            hovertemplate="%{label}: %{value} students (%{percent})<extra></extra>",
         ))
-        theme(fig_pie, "Pass / Fail Split")
+        fig_pie.update_layout(
+            showlegend=True,
+            legend=dict(
+                orientation="h",
+                yanchor="bottom", y=-0.15,
+                xanchor="center", x=0.5,
+                font=dict(color="#9ca3af", size=12),
+            )
+        )
+        theme(fig_pie, "Pass / Fail Split", height=320)
         st.plotly_chart(fig_pie, use_container_width=True)
 
     fig_hist = go.Figure(go.Histogram(
