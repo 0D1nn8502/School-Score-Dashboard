@@ -11,83 +11,160 @@ st.set_page_config(
 
 st.markdown("""
 <style>
-    .stApp { background-color: #0d0f14; }
-    section[data-testid="stSidebar"] { background-color: #14171f; border-right: 1px solid #252a38; }
+    .stApp {
+        background:
+            radial-gradient(circle at top left, rgba(255, 216, 155, 0.35), transparent 28%),
+            radial-gradient(circle at top right, rgba(157, 228, 255, 0.28), transparent 24%),
+            linear-gradient(180deg, #fffdf8 0%, #f6f9ff 100%);
+        color: #1f2937;
+    }
+    section[data-testid="stSidebar"] {
+        background: rgba(255, 255, 255, 0.9);
+        border-right: 1px solid #dbe4f0;
+    }
     [data-testid="metric-container"] {
-        background: #1a1e28;
-        border: 1px solid #252a38;
-        border-radius: 10px;
+        background: rgba(255, 255, 255, 0.92);
+        border: 1px solid #d9e2ef;
+        border-radius: 16px;
         padding: 1rem 1.2rem;
-        border-top: 2px solid #4f8ef7;
+        border-top: 3px solid #2f80ed;
+        box-shadow: 0 10px 30px rgba(47, 128, 237, 0.08);
     }
-    [data-testid="metric-container"] label { color: #9ca3af !important; font-size: 0.75rem !important; }
-    [data-testid="metric-container"] [data-testid="stMetricValue"] { color: #e8eaf0 !important; font-size: 1.8rem !important; }
-    [data-testid="metric-container"] [data-testid="stMetricDelta"] { color: #3ecf8e !important; }
-    h1, h2, h3 { color: #e8eaf0 !important; }
+    [data-testid="metric-container"] label { color: #64748b !important; font-size: 0.75rem !important; }
+    [data-testid="metric-container"] [data-testid="stMetricValue"] { color: #0f172a !important; font-size: 1.8rem !important; }
+    [data-testid="metric-container"] [data-testid="stMetricDelta"] { color: #0f9d58 !important; }
+    h1, h2, h3 { color: #0f172a !important; }
+    p, label, span, div { color: #334155; }
     .stTabs [data-baseweb="tab-list"] {
-        background: #1a1e28; border-radius: 8px; padding: 6px; gap: 8px; border: 1px solid #252a38;
+        background: rgba(255, 255, 255, 0.8);
+        border-radius: 12px;
+        padding: 6px;
+        gap: 8px;
+        border: 1px solid #dbe4f0;
     }
-    .stTabs [data-baseweb="tab"] { background: transparent; color: #9ca3af; border-radius: 6px; font-size: 0.85rem; padding: 8px 22px !important; }
-    .stTabs [aria-selected="true"] { background: #4f8ef7 !important; color: white !important; }
+    .stTabs [data-baseweb="tab"] {
+        background: transparent;
+        color: #64748b;
+        border-radius: 8px;
+        font-size: 0.9rem;
+        padding: 8px 22px !important;
+    }
+    .stTabs [aria-selected="true"] { background: #2f80ed !important; color: white !important; }
     .stTextInput input {
-        background: #1a1e28 !important; border: 1px solid #252a38 !important;
-        color: #e8eaf0 !important; border-radius: 8px !important; font-family: monospace;
+        background: rgba(255, 255, 255, 0.95) !important;
+        border: 1px solid #dbe4f0 !important;
+        color: #0f172a !important;
+        border-radius: 10px !important;
+        font-family: monospace;
     }
-    hr { border-color: #252a38 !important; }
+    .stButton > button {
+        background: linear-gradient(180deg, #ffffff 0%, #f4f8ff 100%) !important;
+        color: #1e3a5f !important;
+        border: 1px solid #cfe0f5 !important;
+        border-radius: 10px !important;
+        box-shadow: 0 6px 18px rgba(47, 128, 237, 0.08);
+        font-weight: 600 !important;
+    }
+    .stButton > button:hover {
+        border-color: #2f80ed !important;
+        color: #0f172a !important;
+        background: linear-gradient(180deg, #ffffff 0%, #eaf3ff 100%) !important;
+    }
+    .stButton > button:focus {
+        box-shadow: 0 0 0 0.2rem rgba(47, 128, 237, 0.18) !important;
+    }
+    .stButton > button:disabled {
+        background: #f8fafc !important;
+        color: #94a3b8 !important;
+        border-color: #e2e8f0 !important;
+        box-shadow: none !important;
+    }
+    [data-testid="stDataFrame"] { background: rgba(255, 255, 255, 0.9); border-radius: 14px; }
+    hr { border-color: #dbe4f0 !important; }
 </style>
 """, unsafe_allow_html=True)
 
 # =========================
 # CONSTANTS
 # =========================
-SHEET_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vQLsX4iJq5RtPd_Jt1hvfVIxXweaYRPnPlPwNNkbAMfcm-bVyFP45pVH7uBwVL9eZKKGe0NRxVQjO4R/pub?output=csv"
-GRADE_ORDER = ["A1", "A2", "B1", "B2", "C1", "C2", "D", "E"]
-GRADE_COLORS = {
-    "A1": "#3ecf8e", "A2": "#4f8ef7", "B1": "#7c6af5", "B2": "#a78bfa",
-    "C1": "#f5a623", "C2": "#fb923c", "D": "#e75858", "E": "#6b7280"
+# Add future grades here as new key/url pairs.
+SHEET_SOURCES = {
+    "AISSE / Grade 10": "https://docs.google.com/spreadsheets/d/e/2PACX-1vQLsX4iJq5RtPd_Jt1hvfVIxXweaYRPnPlPwNNkbAMfcm-bVyFP45pVH7uBwVL9eZKKGe0NRxVQjO4R/pub?output=csv"
+}
+BAND_ORDER = ["90-100%", "80-89%", "70-79%", "60-69%", "50-59%", "40-49%", "33-39%", "Below 33%"]
+BAND_COLORS = {
+    "90-100%": "#1f9d55",
+    "80-89%": "#2f80ed",
+    "70-79%": "#56ccf2",
+    "60-69%": "#9b8cff",
+    "50-59%": "#f2c94c",
+    "40-49%": "#f2994a",
+    "33-39%": "#eb5757",
+    "Below 33%": "#9aa5b1",
 }
 
 
 def theme(fig, title="", height=None):
-    """Apply consistent dark theme to a plotly figure."""
+    """Apply a consistent light theme to a plotly figure."""
     opts = dict(
         paper_bgcolor="rgba(0,0,0,0)",
-        plot_bgcolor="rgba(26,30,40,0.6)",
-        font_color="#9ca3af",
+        plot_bgcolor="rgba(255,255,255,0.82)",
+        font_color="#475569",
         font_size=12,
         margin=dict(l=20, r=20, t=44 if title else 20, b=20),
         showlegend=False,
     )
     if title:
-        opts["title"] = dict(text=title, font=dict(color="#e8eaf0", size=14))
+        opts["title"] = dict(text=title, font=dict(color="#0f172a", size=15))
     if height:
         opts["height"] = height
     fig.update_layout(**opts)
-    fig.update_xaxes(gridcolor="#252a38", linecolor="#252a38", zerolinecolor="#252a38")
-    fig.update_yaxes(gridcolor="#252a38", linecolor="#252a38", zerolinecolor="#252a38")
+    fig.update_xaxes(gridcolor="#e2e8f0", linecolor="#dbe4f0", zerolinecolor="#dbe4f0")
+    fig.update_yaxes(gridcolor="#e2e8f0", linecolor="#dbe4f0", zerolinecolor="#dbe4f0")
     return fig
 
 
 # =========================
-# GRADE FUNCTION
+# PERCENTAGE BANDS
 # =========================
-def get_grade(p):
-    if p >= 91: return "A1"
-    if p >= 81: return "A2"
-    if p >= 71: return "B1"
-    if p >= 61: return "B2"
-    if p >= 51: return "C1"
-    if p >= 41: return "C2"
-    if p >= 33: return "D"
-    return "E"
+def get_percentage_band(p):
+    if p >= 90: return "90-100%"
+    if p >= 80: return "80-89%"
+    if p >= 70: return "70-79%"
+    if p >= 60: return "60-69%"
+    if p >= 50: return "50-59%"
+    if p >= 40: return "40-49%"
+    if p >= 33: return "33-39%"
+    return "Below 33%"
+
+
+def make_band_chip(label, color, count, avg_score):
+    st.markdown(
+        f"""
+        <div style="
+            background: rgba(255,255,255,0.95);
+            border: 1px solid #dbe4f0;
+            border-left: 6px solid {color};
+            border-radius: 14px;
+            padding: 0.9rem 1rem;
+            min-height: 92px;
+            box-shadow: 0 8px 24px rgba(15, 23, 42, 0.04);
+        ">
+            <div style="font-weight:700;color:#0f172a;font-size:0.95rem;">{label}</div>
+            <div style="color:#475569;font-size:0.82rem;margin-top:0.25rem;">{count} students</div>
+            <div style="color:#64748b;font-size:0.8rem;margin-top:0.15rem;">Avg {avg_score:.1f}%</div>
+        </div>
+        """,
+        unsafe_allow_html=True,
+    )
 
 
 # =========================
 # DATA LOADING
 # =========================
 @st.cache_data(ttl=300, show_spinner=False)
-def load_data():
-    df = pd.read_csv(SHEET_URL)
+def load_data(sheet_url):
+    df = pd.read_csv(sheet_url)
     df.columns = df.columns.str.strip()
     df = df.rename(columns={"%": "PCT"})
     df.columns = (
@@ -103,16 +180,21 @@ def load_data():
         df["RESULT"] = df["RESULT"].str.strip().str.upper()
     if "Gender" in df.columns:
         df["Gender"] = df["Gender"].str.strip().str.upper()
-    df["GRADE"] = df["PCT"].apply(get_grade)
+    df["PERCENTAGE_BAND"] = df["PCT"].apply(get_percentage_band)
     return df
 
+
+# =========================
+# DATASET PICKER
+# =========================
+selected_dataset = st.sidebar.selectbox("Dataset / Grade", list(SHEET_SOURCES.keys()))
 
 # =========================
 # LOAD DATA
 # =========================
 with st.spinner("Loading student records..."):
     try:
-        df = load_data()
+        df = load_data(SHEET_SOURCES[selected_dataset])
         load_error = None
     except Exception as e:
         df = pd.DataFrame()
@@ -126,9 +208,10 @@ if load_error:
 # SIDEBAR FILTERS
 # =========================
 with st.sidebar:
-    st.markdown("## 🎓 AISSE Dashboard")
+    st.markdown("## 🎓 Results Dashboard")
+    st.caption("Pick a grade dataset, then explore the same analysis layout.")
     st.markdown(
-        f"<small style='color:#6b7280;font-family:monospace'>{len(df)} records loaded</small>",
+        f"<small style='color:#64748b;font-family:monospace'>{len(df)} records loaded</small>",
         unsafe_allow_html=True
     )
     st.divider()
@@ -144,12 +227,12 @@ with st.sidebar:
     sel_results = st.multiselect("Result", results_opts, default=results_opts)
 
     st.divider()
-    st.markdown("### 🏅 Grade Legend")
-    for g, c in GRADE_COLORS.items():
+    st.markdown("### 📚 Percentage Bands")
+    for band, color in BAND_COLORS.items():
         st.markdown(
-            f"<span style='display:inline-block;width:10px;height:10px;background:{c};"
+            f"<span style='display:inline-block;width:10px;height:10px;background:{color};"
             f"border-radius:2px;margin-right:6px'></span>"
-            f"<span style='font-family:monospace;font-size:0.8rem;color:#9ca3af'>{g}</span>",
+            f"<span style='font-family:monospace;font-size:0.8rem;color:#64748b'>{band}</span>",
             unsafe_allow_html=True
         )
 
@@ -165,11 +248,23 @@ if sel_results and "RESULT" in df.columns:
     mask &= df["RESULT"].isin(sel_results)
 
 dff = df[mask].copy()
+roll_col = next((c for c in df.columns if "Board_Roll" in c or "Roll" in c), None)
+name_col = "NAME" if "NAME" in df.columns else None
+father_col = next((c for c in df.columns if "FATHER" in c.upper()), None)
+sub_cols = [c for c in df.columns if c.startswith("SUB")]
+mo_cols = [c for c in df.columns if c.startswith("MO")]
 
 # =========================
 # HEADER + KPIs
 # =========================
-st.markdown("# AISSE <span style='color:#4f8ef7'>Results</span>", unsafe_allow_html=True)
+st.markdown(
+    f"# {selected_dataset} <span style='color:#2f80ed'>Performance Dashboard</span>",
+    unsafe_allow_html=True,
+)
+st.caption("Percentage-first analysis with class trends, score bands, and student-level lookup.")
+
+if "selected_band" not in st.session_state:
+    st.session_state.selected_band = None
 
 total = len(dff)
 passed = int((dff["RESULT"] == "PASS").sum()) if "RESULT" in dff.columns else 0
@@ -198,25 +293,26 @@ with tab1:
     col_a, col_b = st.columns([3, 2])
 
     with col_a:
-        grade_counts = (
-            dff["GRADE"].value_counts()
-            .reindex(GRADE_ORDER, fill_value=0)
+        band_counts = (
+            dff["PERCENTAGE_BAND"].value_counts()
+            .reindex(BAND_ORDER, fill_value=0)
             .reset_index()
         )
-        grade_counts.columns = ["Grade", "Count"]
+        band_counts.columns = ["Percentage Range", "Count"]
 
-        fig_grade = go.Figure(go.Bar(
-            x=grade_counts["Grade"],
-            y=grade_counts["Count"],
-            marker_color=[GRADE_COLORS[g] for g in grade_counts["Grade"]],
-            text=grade_counts["Count"],
+        fig_band = go.Figure(go.Bar(
+            x=band_counts["Percentage Range"],
+            y=band_counts["Count"],
+            marker_color=[BAND_COLORS[band] for band in band_counts["Percentage Range"]],
+            text=band_counts["Count"],
             textposition="outside",
-            textfont=dict(color="#e8eaf0", size=11),
+            textfont=dict(color="#0f172a", size=11),
+            hovertemplate="%{x}: %{y} students<extra></extra>",
         ))
-        fig_grade.update_xaxes(title=None)
-        fig_grade.update_yaxes(title="Students")
-        theme(fig_grade, "Grade Distribution")
-        st.plotly_chart(fig_grade, use_container_width=True)
+        fig_band.update_xaxes(title=None)
+        fig_band.update_yaxes(title="Students")
+        theme(fig_band, "Percentage Range Distribution")
+        st.plotly_chart(fig_band, use_container_width=True)
 
     with col_b:
         result_counts = dff["RESULT"].value_counts() if "RESULT" in dff.columns else pd.Series()
@@ -224,7 +320,7 @@ with tab1:
             labels=result_counts.index.tolist(),
             values=result_counts.values.tolist(),
             hole=0.65,
-            marker=dict(colors=["#3ecf8e", "#e75858"], line=dict(width=0)),
+            marker=dict(colors=["#1f9d55", "#eb5757"], line=dict(width=0)),
             textinfo="percent",
             textposition="inside",
             textfont=dict(color="#ffffff", size=13),
@@ -236,7 +332,7 @@ with tab1:
                 orientation="h",
                 yanchor="bottom", y=-0.15,
                 xanchor="center", x=0.5,
-                font=dict(color="#9ca3af", size=12),
+                font=dict(color="#475569", size=12),
             )
         )
         theme(fig_pie, "Pass / Fail Split", height=320)
@@ -245,13 +341,69 @@ with tab1:
     fig_hist = go.Figure(go.Histogram(
         x=dff["PCT"],
         nbinsx=20,
-        marker_color="#4f8ef7",
+        marker_color="#2f80ed",
         hovertemplate="Score: %{x}<br>Students: %{y}<extra></extra>",
     ))
     fig_hist.update_xaxes(title="Score (%)")
     fig_hist.update_yaxes(title="Students")
     theme(fig_hist, "Score Distribution")
     st.plotly_chart(fig_hist, use_container_width=True)
+
+    band_summary = (
+        dff.groupby("PERCENTAGE_BAND", observed=False)
+        .agg(
+            Students=("PCT", "count"),
+            Average_Score=("PCT", "mean"),
+        )
+        .reindex(BAND_ORDER, fill_value=0)
+        .reset_index()
+    )
+    band_summary["Average_Score"] = band_summary["Average_Score"].round(1)
+    st.markdown("#### Range Snapshot")
+
+    chip_columns = st.columns(4)
+    for idx, row in band_summary.iterrows():
+        band_label = row["PERCENTAGE_BAND"]
+        with chip_columns[idx % 4]:
+            make_band_chip(
+                band_label,
+                BAND_COLORS[band_label],
+                int(row["Students"]),
+                float(row["Average_Score"]),
+            )
+            if st.button(
+                "View students",
+                key=f"band_{band_label}",
+                use_container_width=True,
+                disabled=int(row["Students"]) == 0,
+            ):
+                st.session_state.selected_band = band_label
+
+    selected_band = st.session_state.get("selected_band")
+    if selected_band:
+        detail_cols = []
+        for col_name in [roll_col, name_col, "CLASS", "Gender", "PCT", "RESULT", "PERCENTAGE_BAND"]:
+            if col_name and col_name in dff.columns and col_name not in detail_cols:
+                detail_cols.append(col_name)
+
+        band_students = (
+            dff[dff["PERCENTAGE_BAND"] == selected_band]
+            .sort_values("PCT", ascending=False)[detail_cols]
+        )
+
+        header_col, action_col = st.columns([5, 1])
+        with header_col:
+            st.markdown(f"#### Students in {selected_band}")
+        with action_col:
+            if st.button("Clear", key="clear_selected_band", use_container_width=True):
+                st.session_state.selected_band = None
+                st.rerun()
+
+        st.dataframe(
+            band_students.style.format({"PCT": "{:.1f}%"}),
+            use_container_width=True,
+            hide_index=True,
+        )
 
     if "Gender" in dff.columns and dff["Gender"].nunique() > 1:
         st.markdown("#### Gender Breakdown")
@@ -353,12 +505,6 @@ with tab3:
         "🔍 Search by Roll Number or Name",
         placeholder="e.g. 12345 or Rahul Sharma"
     )
-
-    roll_col = next((c for c in df.columns if "Board_Roll" in c or "Roll" in c), None)
-    name_col = "NAME" if "NAME" in df.columns else None
-    father_col = next((c for c in df.columns if "FATHER" in c.upper()), None)
-    sub_cols = [c for c in df.columns if c.startswith("SUB")]
-    mo_cols = [c for c in df.columns if c.startswith("MO")]
     school_avg = df["PCT"].mean()
 
     if query:
@@ -380,10 +526,10 @@ with tab3:
                 father_str = f"&middot; Father: {s[father_col]}" if father_col and pd.notna(s.get(father_col)) else ""
 
                 st.markdown(f"""
-                <div style='background:#1a1e28;border:1px solid #252a38;border-radius:12px;
+                <div style='background:rgba(255,255,255,0.92);border:1px solid #dbe4f0;border-radius:16px;
                             padding:1.2rem 1.4rem;margin-bottom:0.5rem'>
-                    <h3 style='color:#e8eaf0;margin:0 0 4px'>{s.get('NAME', 'N/A')}</h3>
-                    <p style='color:#6b7280;font-family:monospace;font-size:0.8rem;margin:0'>
+                    <h3 style='color:#0f172a;margin:0 0 4px'>{s.get('NAME', 'N/A')}</h3>
+                    <p style='color:#64748b;font-family:monospace;font-size:0.8rem;margin:0'>
                         Roll: {s.get(roll_col, 'N/A') if roll_col else 'N/A'} &middot;
                         Class: {cls} &middot; Gender: {s.get('Gender', 'N/A')} {father_str}
                     </p>
@@ -394,16 +540,16 @@ with tab3:
                 m1.metric("Score", f"{s['PCT']:.2f}%", delta=f"{s['PCT'] - school_avg:+.1f}% vs school")
                 m2.metric("Total Marks", s.get("TOTAL", "N/A"))
                 m3.metric("Result", s.get("RESULT", "N/A"))
-                m4.metric("Grade", s.get("GRADE", get_grade(s["PCT"])))
+                m4.metric("Range", s.get("PERCENTAGE_BAND", get_percentage_band(s["PCT"])))
 
                 comp_vals = [s["PCT"], class_avg, school_avg]
                 fig_comp = go.Figure(go.Bar(
                     x=["This Student", "Class Average", "School Average"],
                     y=comp_vals,
-                    marker_color=["#4f8ef7", "#7c6af5", "#6b7280"],
+                    marker_color=["#2f80ed", "#56ccf2", "#9aa5b1"],
                     text=[f"{v:.1f}%" for v in comp_vals],
                     textposition="outside",
-                    textfont=dict(color="#e8eaf0"),
+                    textfont=dict(color="#0f172a"),
                 ))
                 fig_comp.update_yaxes(range=[0, 115], ticksuffix="%")
                 theme(fig_comp, "Performance vs Peers", height=300)
@@ -424,10 +570,10 @@ with tab3:
                         fig_sub = go.Figure(go.Bar(
                             x=sub_df["Subject"],
                             y=sub_df["Marks"],
-                            marker_color="#4f8ef7",
+                            marker_color="#2f80ed",
                             text=sub_df["Marks"].apply(lambda x: f"{x:.0f}"),
                             textposition="outside",
-                            textfont=dict(color="#e8eaf0"),
+                            textfont=dict(color="#0f172a"),
                         ))
                         theme(fig_sub, "Subject-wise Marks", height=260)
                         st.plotly_chart(fig_sub, use_container_width=True)
@@ -436,12 +582,12 @@ with tab3:
 
     else:
         st.markdown(
-            "<div style='color:#6b7280;font-family:monospace;font-size:0.85rem;padding:1rem 0'>"
+            "<div style='color:#64748b;font-family:monospace;font-size:0.85rem;padding:1rem 0'>"
             "Enter a roll number or name above to look up results</div>",
             unsafe_allow_html=True
         )
         st.markdown("#### 🏆 Top 10 Performers")
-        top_cols = [c for c in ["NAME", "CLASS", "PCT", "RESULT", "GRADE"] if c in dff.columns]
+        top_cols = [c for c in ["NAME", "CLASS", "PCT", "RESULT", "PERCENTAGE_BAND"] if c in dff.columns]
         top10 = dff.nlargest(10, "PCT")[top_cols]
         st.dataframe(
             top10.style
