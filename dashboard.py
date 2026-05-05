@@ -18,6 +18,16 @@ st.markdown("""
             linear-gradient(180deg, #fffdf8 0%, #f6f9ff 100%);
         color: #1f2937;
     }
+    header[data-testid="stHeader"] {
+        background: rgba(255, 253, 248, 0.9) !important;
+        border-bottom: 1px solid #dbe4f0;
+    }
+    [data-testid="stToolbar"] {
+        background: transparent !important;
+    }
+    [data-testid="stDecoration"] {
+        background: linear-gradient(90deg, #ffd58f 0%, #8fd8ff 100%) !important;
+    }
     section[data-testid="stSidebar"] {
         background: rgba(255, 255, 255, 0.9);
         border-right: 1px solid #dbe4f0;
